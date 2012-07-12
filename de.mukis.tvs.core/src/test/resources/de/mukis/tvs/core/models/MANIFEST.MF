@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Tycho Version Sync
+Bundle-SymbolicName: de.mukis.tvs;singleton:=true
+Bundle-Version: 0.0.1
+Require-Bundle: nz.ac.waikato.cs.weka;bundle-version="3.7.5";visibility:=reexport
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: de.mukis.tvs.core;version="0.0.1",
+ de.mukis.tvs.core.models;version="0.0.1"
+Bundle-ClassPath: .
+Import-Package: org.osgi.framework;version="1.7.0",
+ org.osgi.service.cm;version="[1.3.0,1.4.0)"
+Bundle-Vendor: mukis.de
