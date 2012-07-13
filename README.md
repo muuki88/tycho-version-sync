@@ -16,4 +16,67 @@ will be an eclipse-plugin or hopefully a tycho-plugin.
 
 ## Sample usages
 
-**TODO**
+There are some simple regex matching rules for selecting bundles:
+
+* `com.example` := selects only the bundle _com.example_
+* `com.example.*` := selects _com.example_ and all bundles starting with _com.example_
+* `com.example.+` := selects all bundles starting with _com.example_ without _com.example_
+* Empty string means all bundles
+
+### Synchronize versions
+
+sync exported-packages versions with the _bundle-version_ header.
+
+```bash
+
+sync exported-packages
+```
+
+
+### Set bundle versions
+
+Setting all bundle versions to _1.0.0.qualifier_
+
+```bash
+
+set bundle-version 1.0.0.qualifier
+```
+
+
+Setting bundle version for _com.example_ bundle to _1.0.0.qualifier_
+
+```bash
+
+set bundle-version 1.0.0.qualifier com.example
+```
+
+Setting bundle version for all bundles starting with _com.example_ inclusive _com.example_ bundle to _1.0.0.qualifier_
+
+```bash
+
+set bundle-version 1.0.0.qualifier  com.example.*
+```
+
+Setting bundle version for all bundles starting with _com.example_ exclusive _com.example_ bundle to _1.0.0.qualifier_
+
+```bash
+
+set bundle-version 1.0.0.qualifier com.example.+
+```
+
+Setting bundle version for _com.example.core_ and _com.example.core_ bundle to _1.0.0.qualifier_
+
+```bash
+
+set bundle-version 1.0.0.qualifier com.example.core com.example.ui
+```
+
+
+### Set qualifier in build.properties
+
+Setting all existing _qualifier_ properties in `build.properties` to version _none_
+
+```bash
+
+set qualifier none
+```

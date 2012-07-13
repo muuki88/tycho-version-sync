@@ -27,6 +27,10 @@ public class Project {
 		pomPath = root.resolve(pomSearchPath);
 		buildPropertiesPath = root.resolve(buildPropertiesSearchPath);
 	}
+	
+	public String getName() {
+		return root.getFileName().toString();
+	}
 
 	public Path getRoot() {
 		return root;

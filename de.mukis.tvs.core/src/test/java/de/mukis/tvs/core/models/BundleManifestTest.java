@@ -28,7 +28,7 @@ public class BundleManifestTest {
 
 	@Test
 	public void changeBundleVersion() throws IOException, BundleException {
-		String oldVersion = mf.changeBundleVersion("1.0.1");
+		String oldVersion = mf.setBundleVersion("1.0.1");
 		assertEquals("0.0.1", oldVersion);
 
 		BundleManifest manifest = simulatedWriteRead();
@@ -39,7 +39,7 @@ public class BundleManifestTest {
 	public void changeExportedPackageVersion() throws IOException, BundleException {
 		String pkg = "de.mukis.tvs.core";
 		String version = "1.0.1";
-		assertTrue(mf.changeExportedPackageVersion(pkg, version));
+		assertTrue(mf.setExportedPackageVersion(pkg, version));
 		
 		BundleManifest manifest = simulatedWriteRead();
 		
@@ -58,7 +58,7 @@ public class BundleManifestTest {
 	public void changeImportedPackageVersion() throws IOException, BundleException {
 		String pkg = "org.osgi.framework";
 		String version = "2.0.0";
-		assertTrue(mf.changeImportedPackageVersion(pkg, version));
+		assertTrue(mf.setImportedPackageVersion(pkg, version));
 		BundleManifest manifest = simulatedWriteRead();
 		
 		String value = manifest.getImportedPackages().get(pkg);
@@ -76,7 +76,7 @@ public class BundleManifestTest {
 	public void changeRequiredBundleVersion() throws IOException, BundleException {
 		String pkg = "nz.ac.waikato.cs.weka";
 		String version = "4.0.0";
-		assertTrue(mf.changeRequiredBundleVersion(pkg, version));
+		assertTrue(mf.setRequiredBundleVersion(pkg, version));
 		BundleManifest manifest = simulatedWriteRead();
 		
 		String value = manifest.getRequiredBundles().get(pkg);

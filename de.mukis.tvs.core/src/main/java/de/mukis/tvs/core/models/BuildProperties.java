@@ -17,13 +17,19 @@ import java.nio.file.StandardCopyOption;
 public class BuildProperties {
 
 	private String qualifier;
+	private boolean hasQualifier;
 
 	public String getQualifier() {
 		return qualifier;
 	}
 
 	public void setQualifier(String qualifier) {
-		this.qualifier = qualifier;
+		if (hasQualifier)
+			this.qualifier = qualifier;
+	}
+	
+	public boolean hasQualifier() {
+		return hasQualifier;
 	}
 
 	public static BuildProperties parse(Path path) throws IOException {
@@ -34,8 +40,13 @@ public class BuildProperties {
 			String line = null;
 			while ((line = r.readLine()) != null) {
 				String[] keyValue = line.replace(" ", "").split("=");
-				if (keyValue[0].equals("qualifier"))
+				if (keyValue[0].equals("qualifier")) {
+					if(keyValue.length == 1)
+						continue;
 					properties.qualifier = keyValue[1];
+					properties.hasQualifier = true;
+				}
+
 			}
 		}
 		return properties;
@@ -46,8 +57,9 @@ public class BuildProperties {
 		Files.createFile(tmp);
 		try (LineNumberReader r = new LineNumberReader(Files.newBufferedReader(path, Charset.defaultCharset()));
 				PrintWriter w = new PrintWriter(Files.newBufferedWriter(tmp, Charset.defaultCharset()))) {
-			
-			//Copy everything to temporary file and reflect changes made to qualifier
+
+			// Copy everything to temporary file and reflect changes made to
+			// qualifier
 			String line = null;
 			while ((line = r.readLine()) != null) {
 				String[] keyValue = line.replace(" ", "").split("=");
@@ -57,12 +69,12 @@ public class BuildProperties {
 					w.println(line);
 			}
 			w.flush();
-			//Replaced original with temporary file
+			// Replaced original with temporary file
 			Files.move(tmp, path, StandardCopyOption.REPLACE_EXISTING);
 		}
 
 	}
-	
+
 	@Override
 	public String toString() {
 		return "BuildProperties [qualifier=" + qualifier + "]";
