@@ -9,8 +9,8 @@ will be an eclipse-plugin or hopefully a tycho-plugin.
 
 ## Features
 
-* Sync your _bundle-version_ in the _MANIFEST.MF_ with _pom.xml_ `<version>` element.
-* Sync your _exported package_ versions with the _bundle-version_ in the _MANIFEST.MF_ or _pom.xml_
+* Sync your `bundle-version` in the _MANIFEST.MF_ with _pom.xml_ `<version>` element.
+* Sync your _exported package_ versions with the `bundle-version` in the _MANIFEST.MF_ or _pom.xml_
 * Update your _imported packages_ / _required bundles_ versions
 * Update your _qualifier_ in the _build.properties_ file
 
@@ -25,13 +25,19 @@ There are some simple regex matching rules for selecting bundles:
 
 ### Synchronize versions
 
-sync exported-packages versions with the _bundle-version_ header.
+sync exported-packages versions with the `bundle-version` header.
 
 ```bash
 
 sync exported-packages
 ```
 
+sync `bundle-version` with the `version` attribute of the corresponding `pom.xml`.
+
+```bash
+
+sync exported-packages
+```
 
 ### Set bundle versions
 
