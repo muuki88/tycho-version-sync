@@ -36,7 +36,7 @@ sync `bundle-version` with the `version` attribute of the corresponding `pom.xml
 
 ```bash
 
-sync exported-packages
+sync manifest
 ```
 
 ### Set bundle versions
