@@ -23,7 +23,7 @@ import com.google.common.base.Joiner;
  * @see http://www.eclipsezone.com/eclipse/forums/t116172.html
  * 
  */
-public class BundleManifest extends Manifest {
+public class BundleManifest extends Manifest implements IWriteable {
 
 	private String bundleVersion;
 	private String bundleSymbolicName;

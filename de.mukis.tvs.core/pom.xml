@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.mukis.tvs</groupId>
     <artifactId>de.mukis.tvs.core</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
     <name>Tycho Version Sync</name>
     <description>Syncs MANIFEST.MF, build.properties and pom.xml for tycho builds</description>
     

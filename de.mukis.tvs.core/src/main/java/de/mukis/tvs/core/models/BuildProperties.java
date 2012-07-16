@@ -2,6 +2,7 @@ package de.mukis.tvs.core.models;
 
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -14,7 +15,7 @@ import java.nio.file.StandardCopyOption;
  * @version 0.0.1
  * 
  */
-public class BuildProperties {
+public class BuildProperties implements IWriteable {
 
 	private String qualifier;
 	private boolean hasQualifier;
@@ -30,6 +31,12 @@ public class BuildProperties {
 	
 	public boolean hasQualifier() {
 		return hasQualifier;
+	}
+	
+	@Override
+	public void write(OutputStream out) throws IOException {
+		//TODO implement
+		System.err.println("BuildProperties.write(). Not implemented yet");
 	}
 
 	public static BuildProperties parse(Path path) throws IOException {
@@ -79,4 +86,5 @@ public class BuildProperties {
 	public String toString() {
 		return "BuildProperties [qualifier=" + qualifier + "]";
 	}
+
 }

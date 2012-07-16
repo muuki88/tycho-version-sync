@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.osgi.framework.BundleException;
@@ -18,6 +19,7 @@ import org.xml.sax.SAXException;
 
 import de.mukis.tvs.core.models.BuildProperties;
 import de.mukis.tvs.core.models.BundleManifest;
+import de.mukis.tvs.core.models.Feature;
 import de.mukis.tvs.core.models.POM;
 import de.mukis.tvs.core.models.Project;
 
@@ -67,6 +69,8 @@ public class MainApp {
 					cmd = scanner.next();
 					if (cmd.equals("pom"))
 						showPom(projects);
+					else if(cmd.equals("features"))
+						showFeature(projects);
 				} else if (cmd.equals("set")) {
 					cmd = scanner.next();
 					if (cmd.equals("qualifier")) {
@@ -122,6 +126,17 @@ public class MainApp {
 		for (Project project : projects) {
 			POM pom = POM.parse(project.getPomPath());
 			System.out.println(pom);
+		}
+	}
+	
+
+	private static void showFeature(List<Project> projects) throws IOException, ParserConfigurationException, SAXException, TransformerException {
+		for (Project project : projects) {
+			Feature feature = Feature.parse(project.getFeaturePath());
+			if(feature != null) {
+				feature.setVersion("0.0.1");
+				feature.write(System.out);
+			}
 		}
 	}
 
