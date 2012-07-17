@@ -19,7 +19,7 @@ import com.google.common.base.Joiner;
 /**
  * 
  * @author Nepomuk Seiler
- * @version 0.0.1
+ * @version 0.0.2
  * @see http://www.eclipsezone.com/eclipse/forums/t116172.html
  * 
  */

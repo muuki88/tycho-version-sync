@@ -1,10 +1,13 @@
 package de.mukis.tvs.core;
 
+/**
+ * 
+ * @author Nepomuk Seiler
+ * @version 0.0.2
+ * 
+ */
 public class ProjectException extends RuntimeException {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -1502798363137318575L;
 	
 	public ProjectException() {

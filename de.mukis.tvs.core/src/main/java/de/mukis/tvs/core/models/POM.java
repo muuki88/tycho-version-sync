@@ -15,6 +15,12 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+/**
+ * 
+ * @author Nepomuk Seiler
+ * @version 0.0.2
+ * 
+ */
 public class POM {
 
 	private String groupId;

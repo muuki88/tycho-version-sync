@@ -7,6 +7,23 @@ bundles and want to keep poms and manifests in sync.
 The current version is just a simple commandline tool. Maybe there
 will be an eclipse-plugin or hopefully a tycho-plugin.
 
+## Run
+
+Create an environment variable to run tycho-version-sync
+in any directory.
+
+```bash
+
+java -jar tycho-version-sync.jar 
+```
+
+or give the directory as a parameter
+
+```bash
+
+java -jar tycho-version-sync.jar /home/user/my/path
+```
+
 ## Features
 
 * Sync your `bundle-version` in the _MANIFEST.MF_ with _pom.xml_ `<version>` element.

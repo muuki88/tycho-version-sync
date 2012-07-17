@@ -4,10 +4,16 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import de.mukis.tvs.core.ProjectException;
-
+/**
+ * 
+ * @author Nepomuk Seiler
+ * @version 0.0.2
+ * 
+ */
 public class PluginProject extends AbstractProject {
 
+	public PluginProject() {}
+	
 	public PluginProject(Path root) {
 		super(root);
 	}
@@ -54,15 +60,6 @@ public class PluginProject extends AbstractProject {
 				((BuildProperties)file).write(out);
 			}
 		}
-	}
-
-	@Override
-	public IProject from(Path path) throws ProjectException {
-		if (!Files.exists(path))
-			throw new ProjectException("Path [" + path + "] does not exist.");
-		if (isProjectPath(path))
-			throw new ProjectException("Path [" + path + "] is not a feature project.");
-		return new PluginProject(path);
 	}
 
 	@Override

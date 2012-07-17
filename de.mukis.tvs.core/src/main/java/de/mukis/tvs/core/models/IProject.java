@@ -42,10 +42,9 @@ public interface IProject {
 	/**
 	 * 
 	 * @param path
-	 * @return object representing the project
 	 * @throws ProjectException
 	 */
-	public IProject from(Path path) throws ProjectException;
+	public void read(Path path) throws ProjectException;
 	
 	public boolean isProjectPath(Path path);
 }

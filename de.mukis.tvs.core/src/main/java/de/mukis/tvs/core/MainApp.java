@@ -1,7 +1,6 @@
 package de.mukis.tvs.core;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,19 +9,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.xpath.XPathExpressionException;
-
-import org.osgi.framework.BundleException;
-import org.xml.sax.SAXException;
-
 import de.mukis.tvs.core.models.BuildProperties;
 import de.mukis.tvs.core.models.BundleManifest;
 import de.mukis.tvs.core.models.Feature;
+import de.mukis.tvs.core.models.FeatureProject;
+import de.mukis.tvs.core.models.IProject;
 import de.mukis.tvs.core.models.POM;
-import de.mukis.tvs.core.models.Project;
+import de.mukis.tvs.core.models.PluginProject;
+import de.mukis.tvs.core.models.UpdateSiteProject;
 
+/**
+ * 
+ * @author Nepomuk Seiler
+ * @version 0.0.2
+ * 
+ */
 public class MainApp {
 
 	private static final String VERSION = "0.0.1";
@@ -53,7 +54,7 @@ public class MainApp {
 		}
 		try (Scanner scanner = new Scanner(System.in)) {
 			System.out.println("Using [" + root + "] as project. Reading projects...");
-			List<Project> projects = readProjects();
+			List<IProject> projects = readProjects();
 			while (true) {
 				System.out.print(">");
 				String cmd = scanner.next();
@@ -69,7 +70,7 @@ public class MainApp {
 					cmd = scanner.next();
 					if (cmd.equals("pom"))
 						showPom(projects);
-					else if(cmd.equals("features"))
+					else if (cmd.equals("features"))
 						showFeature(projects);
 				} else if (cmd.equals("set")) {
 					cmd = scanner.next();
@@ -82,8 +83,8 @@ public class MainApp {
 					cmd = scanner.next();
 					if (cmd.equals("exported-packages")) {
 						syncExportedPackageVersion(args(scanner), projects);
-					} else if(cmd.equals("manifest")) {
-						syncManifest(args(scanner),projects);
+					} else if (cmd.equals("manifest")) {
+						syncManifest(args(scanner), projects);
 					}
 				} else {
 					System.out.println("Unkown command " + cmd);
@@ -115,25 +116,23 @@ public class MainApp {
 	/* ============== Show and List =============== */
 	/* ============================================= */
 
-	private static void list(List<Project> projects) {
-		for (Project project : projects) {
+	private static void list(List<IProject> projects) {
+		for (IProject project : projects) {
 			System.out.println(project.toString());
 		}
 	}
 
-	private static void showPom(List<Project> projects) throws XPathExpressionException, ParserConfigurationException, SAXException,
-			IOException {
-		for (Project project : projects) {
-			POM pom = POM.parse(project.getPomPath());
+	private static void showPom(List<IProject> projects) throws Exception {
+		for (IProject project : projects) {
+			POM pom = project.get(POM.class);
 			System.out.println(pom);
 		}
 	}
-	
 
-	private static void showFeature(List<Project> projects) throws IOException, ParserConfigurationException, SAXException, TransformerException {
-		for (Project project : projects) {
-			Feature feature = Feature.parse(project.getFeaturePath());
-			if(feature != null) {
+	private static void showFeature(List<IProject> projects) throws Exception {
+		for (IProject project : projects) {
+			Feature feature = project.get(Feature.class);
+			if (feature != null) {
 				feature.setVersion("0.0.1");
 				feature.write(System.out);
 			}
@@ -144,7 +143,7 @@ public class MainApp {
 	/* ============== Set functions =============== */
 	/* ============================================= */
 
-	private static void setQualifier(String[] args, List<Project> projects) throws IOException, BundleException {
+	private static void setQualifier(String[] args, List<IProject> projects) throws Exception {
 		if (args.length == 0) {
 			System.out.println("No qualifier given");
 			return;
@@ -152,12 +151,13 @@ public class MainApp {
 
 		String qualifier = args[0];
 		System.out.println("Seting qualifier to [" + qualifier + "] ...");
-		for (Project project : projects) {
-			BuildProperties properties = BuildProperties.parse(project.getBuildPropertiesPath());
+		for (IProject project : projects) {
+			BuildProperties properties = project.get(BuildProperties.class);
 			if (properties != null && properties.hasQualifier()) {
 				System.out.print("[" + project.getName() + "] Change qualifier " + properties.getQualifier() + " to " + qualifier);
 				properties.setQualifier(qualifier);
-				BuildProperties.write(properties, project.getBuildPropertiesPath());
+				project.update(properties);
+				//BuildProperties.write(properties, project.getBuildPropertiesPath());
 				System.out.println(" \u2713");
 			}
 		}
@@ -167,10 +167,9 @@ public class MainApp {
 	 * 
 	 * @param args
 	 * @param projects
-	 * @throws IOException
-	 * @throws BundleException
+	 * @throws Exception 
 	 */
-	private static void setBundleVersion(String[] args, List<Project> projects) throws IOException, BundleException {
+	private static void setBundleVersion(String[] args, List<IProject> projects) throws Exception {
 		if (args.length == 0) {
 			System.out.println("No version given");
 			return;
@@ -186,16 +185,14 @@ public class MainApp {
 		}
 
 		System.out.println("Setting bundle-version...");
-		for (Project project : projects) {
-			BundleManifest mf = BundleManifest.parse(project.getManifestPath());
-			if (mf == null || !mf.getBundleSymbolicName().matches(regex))
+		for (IProject project : projects) {
+			BundleManifest manifest = project.get(BundleManifest.class);
+			if (manifest == null || !manifest.getBundleSymbolicName().matches(regex))
 				continue;
-			System.out.println("[" + project.getName() + "][" + mf.getBundleSymbolicName() + "] from " + mf.getBundleVersion() + " to "
-					+ version + " \u2713" );
-			mf.setBundleVersion(version);
-			try (OutputStream out = Files.newOutputStream(project.getManifestPath())) {
-				mf.write(out);
-			}
+			System.out.println("[" + project.getName() + "][" + manifest.getBundleSymbolicName() + "] from " + manifest.getBundleVersion() + " to "
+					+ version + " \u2713");
+			manifest.setBundleVersion(version);
+			project.update(manifest);
 		}
 	}
 
@@ -207,10 +204,9 @@ public class MainApp {
 	 * 
 	 * @param args
 	 * @param projects
-	 * @throws BundleException
-	 * @throws IOException
+	 * @throws Exception 
 	 */
-	private static void syncExportedPackageVersion(String[] args, List<Project> projects) throws IOException, BundleException {
+	private static void syncExportedPackageVersion(String[] args, List<IProject> projects) throws Exception {
 		String regex = MATCH_ALL_BUNDLES;
 		if (args.length != 0) {
 			regex = args[0];
@@ -220,8 +216,8 @@ public class MainApp {
 		}
 
 		System.out.println("Syncing exported packages with bundle-version...");
-		for (Project project : projects) {
-			BundleManifest manifest = BundleManifest.parse(project.getManifestPath());
+		for (IProject project : projects) {
+			BundleManifest manifest = project.get(BundleManifest.class);
 			if (manifest == null || !manifest.getBundleSymbolicName().matches(regex))
 				continue;
 			String version = manifest.getBundleVersion().replaceAll(".qualifier", "");
@@ -229,31 +225,25 @@ public class MainApp {
 				manifest.setExportedPackageVersion(pkg, version);
 			}
 			System.out.println("[" + project.getName() + "][" + manifest.getBundleSymbolicName() + "] synced to " + version + " \u2713");
-			try (OutputStream out = Files.newOutputStream(project.getManifestPath())) {
-				manifest.write(out);
-			}
+			project.update(manifest);
 		}
 	}
 
-	private static void syncManifest(String[] args, List<Project> projects) throws XPathExpressionException, ParserConfigurationException,
-			SAXException, IOException, BundleException {
+	private static void syncManifest(String[] args, List<IProject> projects) throws Exception {
 
 		System.out.println("Syncing MANIFEST.MF bundle-version with pom.xml version ...");
-		for (Project project : projects) {
-			POM pom = POM.parse(project.getPomPath());
-			BundleManifest manifest = BundleManifest.parse(project.getManifestPath());
+		for (IProject project : projects) {
+			POM pom = project.get(POM.class);
+			BundleManifest manifest = project.get(BundleManifest.class);
 			if (pom == null || manifest == null) {
 				System.err.println("No sync for " + project.getName() + ". MANIFEST.MF or pom.xml not found!");
 				continue;
 			}
 			String version = pom.getVersion().replaceFirst("-SNAPSHOT", ".qualifier");
-			System.out.print("Syncing " + manifest.getBundleSymbolicName() + " version=" +manifest.getBundleVersion());
+			System.out.print("Syncing " + manifest.getBundleSymbolicName() + " version=" + manifest.getBundleVersion());
 			System.out.println(" to version=" + version + " \u2713");
 			manifest.setBundleVersion(version);
-			try (OutputStream out = Files.newOutputStream(project.getManifestPath())) {
-				manifest.write(out);
-			}
-			
+			project.update(manifest);
 		}
 	}
 
@@ -261,14 +251,22 @@ public class MainApp {
 	/* ================ Utility Functions ================ */
 	/* =================================================== */
 
-	private static List<Project> readProjects() throws IOException {
-		ArrayList<Project> projects = new ArrayList<>();
+	private static List<IProject> readProjects() throws IOException {
+		ArrayList<IProject> projects = new ArrayList<>();
 
 		try (DirectoryStream<Path> projectPaths = Files.newDirectoryStream(root);) {
 			for (Path path : projectPaths) {
 				if ((Files.isDirectory(path) && !path.getFileName().toString().startsWith("."))) {
-					System.out.println("[Found] " + path.getFileName());
-					projects.add(new Project(path));
+					if (ProjectBuilder.isPluginProject(path)) {
+						System.out.println("[Plugin] " + path.getFileName());
+						projects.add(new PluginProject(path));
+					} else if (ProjectBuilder.isFeatureProject(path)) {
+						System.out.println("[Feature] " + path.getFileName());
+						projects.add(new FeatureProject(path));
+					} else if (ProjectBuilder.isUpdateSiteProject(path)) {
+						System.out.println("[Updatesite] " + path.getFileName());
+						projects.add(new UpdateSiteProject(path));
+					}
 				}
 			}
 		}

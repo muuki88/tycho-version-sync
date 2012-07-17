@@ -1,6 +1,9 @@
 package de.mukis.tvs.core.models;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
+
+import de.mukis.tvs.core.ProjectException;
 
 /**
  * 
@@ -10,10 +13,12 @@ import java.nio.file.Path;
  */
 public abstract class AbstractProject implements IProject {
 
-	private final Path root;
+	private Path root;
+	
+	public AbstractProject() {	}
 	
 	public AbstractProject(Path root) {
-		this.root = root;
+		read(root);
 	}
 
 	@Override
@@ -28,6 +33,15 @@ public abstract class AbstractProject implements IProject {
 			return (T) POM.parse(root.resolve("pom.xml"));
 		}
 		return null;
+	}
+	
+	@Override
+	public void read(Path path) throws ProjectException {
+		if (!Files.exists(path))
+			throw new ProjectException("Path [" + path + "] does not exist.");
+		if (!isProjectPath(path))
+			throw new ProjectException("Path [" + path + "] is not a "+ getClass().getSimpleName() +" project.");
+		this.root = path;
 	}
 
 }
