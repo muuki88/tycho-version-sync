@@ -6,7 +6,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 import de.mukis.tvs.core.models.BuildProperties;
@@ -78,7 +80,11 @@ public class MainApp {
 						setQualifier(args(scanner), projects);
 					} else if (cmd.equals("bundle-version")) {
 						setBundleVersion(args(scanner), projects);
-					}
+					} else if (cmd.equals("import-package")) {
+						setImportedPackageVersion(args(scanner), projects);
+					} else if (cmd.equals("require-bundle")) {
+						setRequiredBundleVersion(args(scanner), projects);
+					} 
 				} else if (cmd.equals("sync")) {
 					cmd = scanner.next();
 					if (cmd.equals("exported-packages")) {
@@ -174,28 +180,79 @@ public class MainApp {
 			System.out.println("No version given");
 			return;
 		}
-		String version = args[0];
-
-		String regex = MATCH_ALL_BUNDLES;
-		if (args.length >= 2) {
-			regex = args[1];
-			for (int i = 2; i < args.length; i++) {
-				regex += "|" + args[i];
-			}
-		}
+		
+		String version = version(args);
+		String regex = regex(args);
 
 		System.out.println("Setting bundle-version...");
 		for (IProject project : projects) {
 			BundleManifest manifest = project.get(BundleManifest.class);
 			if (manifest == null || !manifest.getBundleSymbolicName().matches(regex))
 				continue;
-			System.out.println("[" + project.getName() + "][" + manifest.getBundleSymbolicName() + "] from " + manifest.getBundleVersion() + " to "
+			System.out.println("[" + project.getName() + "] from " + manifest.getBundleVersion() + " to "
 					+ version + " \u2713");
 			manifest.setBundleVersion(version);
 			project.update(manifest);
 		}
 	}
-
+	
+	public static void setImportedPackageVersion(String[] args, List<IProject> projects) throws Exception {
+		if (args.length < 2) {
+			System.out.println("Need version and package");
+			return;
+		}
+		
+		String version = version(args);
+		String regex = regex(args);
+		
+		System.out.println("Setting import-package version...");
+		for (IProject project : projects) {
+			BundleManifest manifest = project.get(BundleManifest.class);
+			if(manifest == null)
+				continue;
+			
+			int count = 0;
+			Map<String, String> packages = manifest.getImportedPackages();
+			for(String pkg : packages.keySet()) {
+				if (!pkg.matches(regex))
+					continue;
+				manifest.setImportedPackageVersion(pkg, version);
+				count++;
+			}
+			System.out.println("[" + project.getName() + "] updated " + count + " packages \u2713");
+			project.update(manifest);
+		}
+	}
+	
+	public static void setRequiredBundleVersion(String[] args, List<IProject> projects) throws Exception {
+		if (args.length < 2) {
+			System.out.println("Need version and bundle");
+			return;
+		}
+		
+		String version = version(args);
+		String regex = regex(args);
+		
+		System.out.println("Setting required-bundle version...");
+		for (IProject project : projects) {
+			BundleManifest manifest = project.get(BundleManifest.class);
+			if(manifest == null)
+				continue;
+			
+			int count = 0;
+			Map<String, String> bundles = manifest.getRequiredBundles();
+			for(String pkg : bundles.keySet()) {
+				if (!pkg.matches(regex))
+					continue;
+				manifest.setRequiredBundleVersion(pkg, version);
+				count++;
+			}
+			System.out.println("[" + project.getName() + "] updated " + count + " bundles \u2713");
+			project.update(manifest);
+		}
+	}
+	
+	
 	/* ============================================= */
 	/* ============== Sync functions =============== */
 	/* ============================================= */
@@ -271,6 +328,22 @@ public class MainApp {
 			}
 		}
 		return projects;
+	}
+	
+	private static String regex(String[] args) {
+		String[] bundles = Arrays.copyOf(args, args.length -1);
+		if(bundles.length == 0)
+			return MATCH_ALL_BUNDLES;
+		String returns = bundles[0];
+		for (int i = 1; i < bundles.length; i++) {
+			returns += "|" + bundles[i];
+		}
+		return returns;
+	}
+	
+	private static String version(String[] args) {
+		int versionIndex = args.length == 0 ? 0 : args.length -1;
+		return args[versionIndex];
 	}
 
 	private static String[] args(Scanner scanner) {

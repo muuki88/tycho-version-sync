@@ -70,29 +70,62 @@ Setting bundle version for _com.example_ bundle to _1.0.0.qualifier_
 
 ```bash
 
-set bundle-version 1.0.0.qualifier com.example
+set bundle-version com.example 1.0.0.qualifier 
 ```
 
 Setting bundle version for all bundles starting with _com.example_ inclusive _com.example_ bundle to _1.0.0.qualifier_
 
 ```bash
 
-set bundle-version 1.0.0.qualifier  com.example.*
+set bundle-version com.example.* 1.0.0.qualifier
 ```
 
 Setting bundle version for all bundles starting with _com.example_ exclusive _com.example_ bundle to _1.0.0.qualifier_
 
 ```bash
 
-set bundle-version 1.0.0.qualifier com.example.+
+set bundle-version com.example.+ 1.0.0.qualifier
 ```
 
 Setting bundle version for _com.example.core_ and _com.example.core_ bundle to _1.0.0.qualifier_
 
 ```bash
 
-set bundle-version 1.0.0.qualifier com.example.core com.example.ui
+set bundle-version com.example.core com.example.ui 1.0.0.qualifier
 ```
+
+## Set import-package and require-bundle header
+
+Setting import-package version for _com.example.dependency_ package to _1.0.0_
+
+```bash
+
+set import-package com.example.dependency 1.0.0
+```
+
+Setting require-bundle version for _com.example.bundle_ package to _1.0.0_.
+Note that this command will preserve all directives and attributes, like
+`resolution="optional"` or `visibility:="reexport"`!
+
+```bash
+
+set import-package com.example.bundle 1.0.0
+```
+
+Will change
+
+```properties
+
+require-bundle: com.example;bundle-version="0.5.0";visibility:="reexport"
+```
+
+into
+
+```properties
+
+require-bundle: com.example;bundle-version="1.0.0";visibility:="reexport"
+```
+
 
 
 ### Set qualifier in build.properties
