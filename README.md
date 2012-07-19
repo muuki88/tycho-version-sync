@@ -109,7 +109,7 @@ Note that this command will preserve all directives and attributes, like
 
 ```bash
 
-set import-package com.example.bundle 1.0.0
+set require-bundle com.example.bundle 1.0.0
 ```
 
 Will change
