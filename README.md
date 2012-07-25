@@ -42,6 +42,18 @@ There are some simple regex matching rules for selecting bundles:
 
 ### Synchronize versions
 
+In order to keep your `MANIFEST.MF`, `exported-packages` and `feature.xml`
+files and headers in sync with your `pom.xml` you can run the following command
+
+sync exported-packages versions with the `bundle-version` header.
+
+```bash
+
+sync all
+```
+
+This is an abreveation for the following three commands.
+
 sync exported-packages versions with the `bundle-version` header.
 
 ```bash

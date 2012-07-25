@@ -95,6 +95,14 @@ public class MainApp {
 						syncManifest(args(scanner), projects);
 					} else if(cmd.equals("feature")) {
 						syncFeatureVersion(args(scanner), projects);
+					} else if(cmd.equals("all")) {
+						String[] args = args(scanner);
+						System.out.println("------------- MANIFEST.MF");
+						syncManifest(args, projects);
+						System.out.println("------------- exported-packages");
+						syncExportedPackageVersion(args, projects);
+						System.out.println("------------- feature.xml");
+						syncFeatureVersion(args, projects);
 					}
 				} else {
 					System.out.println("Unkown command " + cmd);
@@ -318,10 +326,8 @@ public class MainApp {
 		for (IProject project : projects) {
 			POM pom = project.get(POM.class);
 			BundleManifest manifest = project.get(BundleManifest.class);
-			if (pom == null || manifest == null) {
-				System.err.println("No sync for " + project.getName() + ". MANIFEST.MF or pom.xml not found!");
+			if (pom == null || manifest == null) 
 				continue;
-			}
 			String version = qualifierVersion(pom);
 			System.out.print("Syncing " + manifest.getBundleSymbolicName() + " version=" + manifest.getBundleVersion());
 			
