@@ -84,13 +84,17 @@ public class MainApp {
 						setImportedPackageVersion(args(scanner), projects);
 					} else if (cmd.equals("require-bundle")) {
 						setRequiredBundleVersion(args(scanner), projects);
-					} 
+					} else if (cmd.equals("feature")) {
+						setFeatureVersion(args(scanner), projects);
+					}
 				} else if (cmd.equals("sync")) {
 					cmd = scanner.next();
 					if (cmd.equals("exported-packages")) {
 						syncExportedPackageVersion(args(scanner), projects);
 					} else if (cmd.equals("manifest")) {
 						syncManifest(args(scanner), projects);
+					} else if(cmd.equals("feature")) {
+						syncFeatureVersion(args(scanner), projects);
 					}
 				} else {
 					System.out.println("Unkown command " + cmd);
@@ -163,7 +167,6 @@ public class MainApp {
 				System.out.print("[" + project.getName() + "] Change qualifier " + properties.getQualifier() + " to " + qualifier);
 				properties.setQualifier(qualifier);
 				project.update(properties);
-				//BuildProperties.write(properties, project.getBuildPropertiesPath());
 				System.out.println(" \u2713");
 			}
 		}
@@ -189,10 +192,10 @@ public class MainApp {
 			BundleManifest manifest = project.get(BundleManifest.class);
 			if (manifest == null || !manifest.getBundleSymbolicName().matches(regex))
 				continue;
-			System.out.println("[" + project.getName() + "] from " + manifest.getBundleVersion() + " to "
-					+ version + " \u2713");
 			manifest.setBundleVersion(version);
 			project.update(manifest);
+			System.out.println("[" + project.getName() + "] from " + manifest.getBundleVersion() + " to "
+					+ version + " \u2713");
 		}
 	}
 	
@@ -219,8 +222,8 @@ public class MainApp {
 				manifest.setImportedPackageVersion(pkg, version);
 				count++;
 			}
-			System.out.println("[" + project.getName() + "] updated " + count + " packages \u2713");
 			project.update(manifest);
+			System.out.println("[" + project.getName() + "] updated " + count + " packages \u2713");
 		}
 	}
 	
@@ -247,8 +250,31 @@ public class MainApp {
 				manifest.setRequiredBundleVersion(pkg, version);
 				count++;
 			}
-			System.out.println("[" + project.getName() + "] updated " + count + " bundles \u2713");
 			project.update(manifest);
+			System.out.println("[" + project.getName() + "] updated " + count + " bundles \u2713");
+		}
+	}
+	
+
+	private static void setFeatureVersion(String[] args, List<IProject> projects) throws Exception {
+		if (args.length == 0) {
+			System.out.println("Need version");
+			return;
+		}
+		
+		String version = version(args);
+		String regex = regex(args);
+		
+		System.out.println("Setting feature version...");
+		for (IProject project : projects) {
+			Feature feature = project.get(Feature.class);
+			if(feature == null || !feature.getId().matches(regex))
+				continue;
+			
+			String oldversion = feature.getVersion();
+			feature.setVersion(version);
+			project.update(feature);
+			System.out.println("[" + project.getName() + "] updated " + feature.getId() + " from " + oldversion + " to " + version + " \u2713");
 		}
 	}
 	
@@ -281,8 +307,8 @@ public class MainApp {
 			for (String pkg : manifest.getExportedPackages().keySet()) {
 				manifest.setExportedPackageVersion(pkg, version);
 			}
-			System.out.println("[" + project.getName() + "][" + manifest.getBundleSymbolicName() + "] synced to " + version + " \u2713");
 			project.update(manifest);
+			System.out.println("[" + project.getName() + "][" + manifest.getBundleSymbolicName() + "] synced to " + version + " \u2713");
 		}
 	}
 
@@ -296,11 +322,29 @@ public class MainApp {
 				System.err.println("No sync for " + project.getName() + ". MANIFEST.MF or pom.xml not found!");
 				continue;
 			}
-			String version = pom.getVersion().replaceFirst("-SNAPSHOT", ".qualifier");
+			String version = qualifierVersion(pom);
 			System.out.print("Syncing " + manifest.getBundleSymbolicName() + " version=" + manifest.getBundleVersion());
-			System.out.println(" to version=" + version + " \u2713");
+			
 			manifest.setBundleVersion(version);
 			project.update(manifest);
+			System.out.println(" to version=" + version + " \u2713");
+		}
+	}
+	
+	private static void syncFeatureVersion(String[] args, List<IProject> projects) throws Exception {
+		System.out.println("Syncing feature.xml version with pom.xml version ...");
+		for (IProject project : projects) {
+			POM pom = project.get(POM.class);
+			Feature feature = project.get(Feature.class);
+			if (pom == null || feature == null)
+				continue;
+			
+			String version = qualifierVersion(pom);
+			System.out.print("Syncing " + feature.getId() + " version=" + feature.getVersion());
+			
+			feature.setVersion(version);
+			project.update(feature);
+			System.out.println(" to version=" + version + " \u2713");
 		}
 	}
 
@@ -351,6 +395,10 @@ public class MainApp {
 		if (line.isEmpty())
 			return new String[0];
 		return line.split(" ");
+	}
+	
+	private static String qualifierVersion(POM pom) {
+		return pom.getVersion().replaceFirst("-SNAPSHOT", ".qualifier");
 	}
 
 }

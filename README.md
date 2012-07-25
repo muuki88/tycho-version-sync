@@ -56,6 +56,13 @@ sync `bundle-version` with the `version` attribute of the corresponding `pom.xml
 sync manifest
 ```
 
+sync `feature version` with the `version` attribute of the corresponding `pom.xml`.
+
+```bash
+
+sync feature
+```
+
 ### Set bundle versions
 
 Setting all bundle versions to _1.0.0.qualifier_
@@ -94,7 +101,7 @@ Setting bundle version for _com.example.core_ and _com.example.core_ bundle to _
 set bundle-version com.example.core com.example.ui 1.0.0.qualifier
 ```
 
-## Set import-package and require-bundle header
+### Set import-package and require-bundle header
 
 Setting import-package version for _com.example.dependency_ package to _1.0.0_
 
@@ -126,7 +133,23 @@ into
 require-bundle: com.example;bundle-version="1.0.0";visibility:="reexport"
 ```
 
+### Set feature version
 
+You can set all your features to a different version with one command
+
+```bash
+
+set feature 1.0.0
+```
+
+Of course all the common regular expressions work as well
+
+```bash
+
+set feature com.example.* 1.0.0
+```
+
+to set all features with id _com.example.*_ to version 1.0.0.
 
 ### Set qualifier in build.properties
 
