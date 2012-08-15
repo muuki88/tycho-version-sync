@@ -1,11 +1,14 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
     <groupId>de.mukis.tvs</groupId>
-    <artifactId>de.mukis.tvs.core</artifactId>
+    <artifactId>tycho.version.sync</artifactId>
     <version>0.0.3-SNAPSHOT</version>
-    <name>Tycho Version Sync</name>
-    <description>Syncs MANIFEST.MF, build.properties and pom.xml for tycho builds</description>
+  </parent>
+  <artifactId>tycho.version.sync.core</artifactId>
+  <name>CLI</name>
+
+<description>Syncs MANIFEST.MF, build.properties and pom.xml for tycho builds</description>
     
     <properties>
         <maven.compiler.version>2.3.2</maven.compiler.version>
