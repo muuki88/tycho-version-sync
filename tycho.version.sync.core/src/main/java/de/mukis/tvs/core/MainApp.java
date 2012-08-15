@@ -23,7 +23,7 @@ import de.mukis.tvs.core.models.UpdateSiteProject;
 /**
  * 
  * @author Nepomuk Seiler
- * @version 0.0.2
+ * @version 0.0.4
  * 
  */
 public class MainApp {
@@ -328,7 +328,7 @@ public class MainApp {
 			BundleManifest manifest = project.get(BundleManifest.class);
 			if (pom == null || manifest == null) 
 				continue;
-			String version = qualifierVersion(pom);
+			String version = pom.getQualifierVersion();
 			System.out.print("Syncing " + manifest.getBundleSymbolicName() + " version=" + manifest.getBundleVersion());
 			
 			manifest.setBundleVersion(version);
@@ -345,7 +345,7 @@ public class MainApp {
 			if (pom == null || feature == null)
 				continue;
 			
-			String version = qualifierVersion(pom);
+			String version = pom.getQualifierVersion();
 			System.out.print("Syncing " + feature.getId() + " version=" + feature.getVersion());
 			
 			feature.setVersion(version);
@@ -401,10 +401,6 @@ public class MainApp {
 		if (line.isEmpty())
 			return new String[0];
 		return line.split(" ");
-	}
-	
-	private static String qualifierVersion(POM pom) {
-		return pom.getVersion().replaceFirst("-SNAPSHOT", ".qualifier");
 	}
 
 }

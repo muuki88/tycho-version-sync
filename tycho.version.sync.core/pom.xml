@@ -2,11 +2,9 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>de.mukis.tvs</groupId>
-    <artifactId>tycho.version.sync</artifactId>
-    <version>0.0.3-SNAPSHOT</version>
+    <artifactId>parent</artifactId>
+    <version>0.0.4-SNAPSHOT</version>
   </parent>
-  <artifactId>tycho.version.sync.core</artifactId>
-  <name>CLI</name>
 
 <description>Syncs MANIFEST.MF, build.properties and pom.xml for tycho builds</description>
     
@@ -81,4 +79,7 @@
         <name>mukis.de</name>
         <url>www.mukis.de</url>
     </organization>
+    <name>Tycho Version Sync CLI</name>
+    <artifactId>cli</artifactId>
+    <version>0.0.4-SNAPSHOT</version>
 </project>

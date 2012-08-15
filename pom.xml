@@ -3,12 +3,26 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.mukis.tvs</groupId>
-    <artifactId>tycho.version.sync</artifactId>
-    <version>0.0.3-SNAPSHOT</version>
+    <artifactId>parent</artifactId>
+    <version>0.0.4-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Tycho Version Sync</name>
     <description>Tycho Version Sync</description>
     <modules>
         <module>tycho.version.sync.core</module>
+        <module>tycho.version.sync.mojo</module>
     </modules>
+        <build>
+        <plugins>
+            <plugin>
+                <groupId>de.mukis.tvs</groupId>
+                <artifactId>tycho.version.sync.mojo</artifactId>
+                <version>0.0.3-SNAPSHOT</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

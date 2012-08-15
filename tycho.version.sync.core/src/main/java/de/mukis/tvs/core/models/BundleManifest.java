@@ -19,7 +19,7 @@ import com.google.common.base.Joiner;
 /**
  * 
  * @author Nepomuk Seiler
- * @version 0.0.2
+ * @version 0.0.4
  * @see http://www.eclipsezone.com/eclipse/forums/t116172.html
  * 
  */
@@ -43,8 +43,7 @@ public class BundleManifest extends Manifest implements IWriteable {
 
 	/**
 	 * 
-	 * @param version
-	 *            - x.y.z[.qualifier]
+	 * @param version - x.y.z[.qualifier]
 	 * @return - Old version
 	 */
 	public String setBundleVersion(String version) {
@@ -55,22 +54,18 @@ public class BundleManifest extends Manifest implements IWriteable {
 
 	/**
 	 * 
-	 * @param pkg
-	 *            - package to update, e.g. com.example
-	 * @param version
-	 *            - x.y.z[.qualifier]
+	 * @param pkg - package to update, e.g. com.example
+	 * @param version - x.y.z[.qualifier]
 	 * @return
 	 */
 	public boolean setExportedPackageVersion(String pkg, String version) {
 		return setPackage(pkg, version, exportedPackages);
 	}
-
+	
 	/**
 	 * 
-	 * @param pkg
-	 *            - package to update, e.g. com.example
-	 * @param version
-	 *            - x.y.z[.qualifier] or (x.y.z,a.b.c]
+	 * @param pkg - package to update, e.g. com.example
+	 * @param version - x.y.z[.qualifier] or (x.y.z,a.b.c]
 	 * @return
 	 */
 	public boolean setImportedPackageVersion(String pkg, String version) {
@@ -79,10 +74,8 @@ public class BundleManifest extends Manifest implements IWriteable {
 
 	/**
 	 * 
-	 * @param pkg
-	 *            - package to update, e.g. com.example
-	 * @param version
-	 *            - x.y.z[.qualifier] or (x.y.z,a.b.c]
+	 * @param pkg - package to update, e.g. com.example
+	 * @param version - x.y.z[.qualifier] or (x.y.z,a.b.c]
 	 * @return
 	 */
 	public boolean setRequiredBundleVersion(String pkg, String version) {
@@ -131,6 +124,10 @@ public class BundleManifest extends Manifest implements IWriteable {
 
 	public String getBundleVersion() {
 		return bundleVersion;
+	}
+	
+	public String getBundlePomVersion() {
+		return Versions.asPomVersion(getBundleVersion());
 	}
 
 	public Map<String, String> getExportedPackages() {
@@ -196,4 +193,9 @@ public class BundleManifest extends Manifest implements IWriteable {
 
 		return manifest;
 	}
+	
+	public static String getRawPackage(String pkg) {
+		return pkg.split(";")[0];
+	}
+	
 }

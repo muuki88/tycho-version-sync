@@ -18,7 +18,7 @@ import org.xml.sax.SAXException;
 /**
  * 
  * @author Nepomuk Seiler
- * @version 0.0.2
+ * @version 0.0.4
  * 
  */
 public class POM {
@@ -45,6 +45,10 @@ public class POM {
 	 */
 	public String getVersion() {
 		return version != null ? version : parentVersion;
+	}
+	
+	public String getQualifierVersion() {
+		return Versions.asBundleVersion(getVersion());
 	}
 
 	public String getParentGroupId() {
@@ -146,6 +150,5 @@ public class POM {
 		builder.append("]");
 		return builder.toString();
 	}
-	
 	
 }
