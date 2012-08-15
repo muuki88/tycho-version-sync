@@ -171,3 +171,42 @@ Setting all existing _qualifier_ properties in `build.properties` to version _no
 
 set qualifier none
 ```
+
+
+## Maven Plugin
+
+It's also possible to run this as a plugin in your maven build. You have
+to install the plugin by checking out the source code and running
+
+```bash
+
+mvn install
+```
+
+Then you can add this to your `pom.xml`
+
+```xml
+
+<plugin>
+  <groupId>de.mukis.tvs</groupId>
+  <artifactId>tycho-sync-plugin</artifactId>
+  <version>${sync.version}</version>
+  <executions>
+    <execution>
+      <phase>initialize</phase>
+      <goals>
+        <goal>sync-all</goal>
+      </goals>
+    </execution>
+  </executions>
+</plugin>
+```
+
+or you can run it directly via
+
+```bash
+
+mvn de.mukis.tvs:tycho-sync-plugin:sync-all
+```
+
+The plugin currently only synchronizes on plugin projects.
