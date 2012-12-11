@@ -1,0 +1,13 @@
+#!/bin/sh
+DIRNAME=`dirname "$0"`
+# Setup the JVM
+if [ "x$JAVA" = "x" ]; then
+    if [ "x$JAVA_HOME" != "x" ]; then
+        JAVA="$JAVA_HOME/bin/java"
+    else
+        JAVA="java"
+    fi
+fi
+
+echo "java version: $JAVA"
+java -jar $DIRNAME/tycho-version-sync.jar
