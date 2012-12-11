@@ -1,5 +1,6 @@
 #!/bin/sh
 DIRNAME=`dirname "$0"`
+PROJECTDIR=$1
 # Setup the JVM
 if [ "x$JAVA" = "x" ]; then
     if [ "x$JAVA_HOME" != "x" ]; then
@@ -9,5 +10,10 @@ if [ "x$JAVA" = "x" ]; then
     fi
 fi
 
-echo "java version: $JAVA"
-java -jar $DIRNAME/tycho-version-sync.jar
+# Check if a directory parameter was given
+if [ -z "$PROJECTDIR" ]; then
+    PROJECTDIR=`pwd`
+fi
+
+echo "Java version: $JAVA"
+java -jar $DIRNAME/tycho-version-sync.jar $PROJECTDIR

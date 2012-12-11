@@ -9,8 +9,7 @@ will be an eclipse-plugin or hopefully a tycho-plugin.
 
 ## Run
 
-Create an environment variable to run tycho-version-sync
-in any directory.
+Create an environment variable to run tycho-version-sync in any directory.
 
 ```bash
 
@@ -21,7 +20,16 @@ or give the directory as a parameter
 
 ```bash
 
-java -jar tycho-version-sync.jar /home/user/my/path
+java -jar tycho-version-sync.jar /path/to/project
+```
+
+For unix shell users
+
+```bash
+
+./tycho-version-sync 
+
+./tycho-version-sync /path/to/project
 ```
 
 ## Features
